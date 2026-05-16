@@ -1,30 +1,33 @@
-# Plano de Auditoria e Observabilidade para Agentes de IA
+# ADR 001: Ferramenta de Observabilidade e Auditoria de Agentes
 
-Este documento detalha as ferramentas *Open Source* escolhidas para garantir o monitoramento, a qualidade, a segurança e a governança (auditoria) das nossas soluções baseadas em LLMs e LangGraph.
+**Status:** Aceito
+**Data:** 16 de Maio de 2026
+**Autor:** Especialista de Inteligência Artificial
 
-## 1. Ferramenta de Auditoria de LLM (Avaliação e Governança)
+## 1. Contexto e Problema
+A arquitetura de agentes autônomos baseada em LangGraph e integrações complexas de RAG (com ChromaDB) gera uma "caixa preta" de decisões cognitivas. Precisamos de uma solução capaz de:
+- Monitorar e rastrear a execução de cadeias (chains) e passos dos agentes (loops).
+- Mensurar custos e latência de uso da API de LLMs.
+- Auditar prompts, gerenciar suas versões de forma desacoplada da base de código.
+- Obter métricas claras de governança e *feedback* em tempo real para os ajustes de comportamento (identidade de marca).
 
-Para atender ao requisito de auditoria (incluindo testes de *LLM-as-a-judge*, controle de qualidade das respostas e mitigação de alucinações/vieses), adotaremos o **DeepEval** (ou alternativamente o **Giskard**).
+## 2. Decisão
+Decidimos adotar o **Langfuse** como a ferramenta principal de Observabilidade, Tracing e Prompt Management.
+O DeepEval permanecerá sendo usado (como biblioteca auxiliar de CI/CD), mas o monitoramento em produção e auditoria contínua será focado no Langfuse.
 
-### Por que o DeepEval?
-- **Foco em LLMs e RAG**: É um framework open source altamente especializado em testar e auditar pipelines RAG e Agentes.
-- **Métricas Baseadas em LLM-as-a-Judge**: Fornece métricas prontas como relevância da resposta, fidelidade ao contexto, toxicidade e alucinação.
-- **Integração CI/CD**: Permite rodar baterias de testes automatizados na esteira, bloqueando deploys de agentes que não atinjam o *score* comportamental mínimo (essencial para a governança comportamental definida nos objetivos).
-- **Integração LangChain/LangGraph**: Funciona perfeitamente em conjunto com nossa stack principal.
+## 3. Justificativa
+A escolha recaiu sobre o Langfuse pelos seguintes diferenciais alinhados aos nossos objetivos:
+- **Tracing Profundo de Agentes:** A capacidade de visualizar a árvore hierárquica de chamadas, inputs e outputs de cada nó do *LangGraph* é superior e essencial para *debugging* de engenharia.
+- **Métricas de Produção Focadas:** Oferece painéis *out-of-the-box* robustos de custo financeiro, consumo de tokens e latência, que são gargalos comuns na escalabilidade.
+- **Feedback Loop Nativo:** Permite conectar avaliações geradas por usuários (ex.: *thumbs up/down* da API) diretamente ao *trace* específico que gerou a resposta, fornecendo insumo riquíssimo para a governança comportamental atuar de forma pontual.
+- **Arquitetura Self-Hosted (Privacidade):** Por ser open source e distribuído via Docker, permite que os dados (possivelmente sensíveis de clientes bancários) não trafeguem em SaaS de terceiros, garantindo compliance de segurança.
 
-*(Alternativa forte: **Giskard**, excelente para testes de segurança e detecção de vulnerabilidades e vieses em LLMs).*
+## 4. Consequências
+### Positivas:
+- Visibilidade total em tempo real das ações do agente.
+- Desacoplamento da gestão de Prompts da base de código da API.
+- Facilidade de instrumentar (integração nativa via *callbacks* do LangChain).
 
-## 2. Ferramenta de Observabilidade e Métricas (Tracing e Monitoramento)
-
-Para observar o comportamento dos agentes em tempo real, rastrear o estado das decisões (LangGraph) e coletar métricas, adotaremos o **Langfuse** (ou alternativamente o **Phoenix by Arize**).
-
-### Por que o Langfuse?
-- **Tracing de Agentes (LangGraph)**: Permite visualizar exatamente o caminho cognitivo que o agente tomou (quais *tools* chamou, loops de reflexão, tempo em cada etapa).
-- **Métricas de Custo e Latência**: Calcula automaticamente tokens consumidos e latência por requisição, fundamental para escalar a arquitetura.
-- **Feedback Loop**: Possui suporte nativo para coletar feedback do usuário final (thumbs up/down) e vincular isso ao trace da execução, alimentando a área de governança com dados reais.
-- **Open Source e Self-Hosted**: Pode ser hospedado na própria infraestrutura do banco, garantindo privacidade dos dados.
-
-## Próximos Passos de Integração
-1. Subir instâncias locais (via Docker) do Langfuse/Phoenix para iniciar a instrumentação.
-2. Adicionar os *callbacks* do Langfuse na inicialização da nossa API FastAPI e nas cadeias do LangChain.
-3. Criar a primeira suíte de testes de auditoria com DeepEval simulando o tom de voz do Banco BV.
+### Negativas / Riscos Mitigados:
+- Custo de infraestrutura interna para manter o banco PostgreSQL do Langfuse rodando de forma resiliente.
+- Necessidade de adicionar decoradores/callbacks em todas as funções da nossa API para garantir o rastreamento, o que exige disciplina do time de engenharia.
