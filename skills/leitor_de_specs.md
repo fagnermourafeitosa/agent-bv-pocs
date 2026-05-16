@@ -23,9 +23,10 @@ Quando o usuário solicitar algo como "Execute a PoC 1" ou "Inicie a spec X", vo
    - Garanta que a linha atualizada reflita o texto exato da original, mudando apenas a checkbox.
 
 5. **Aguardar Próxima Instrução ou Continuar**:
-   - Salve o arquivo (caso tenha feito *replace*), faça o commit da tarefa se apropriado, informe ao usuário o que foi feito e pergunte se pode seguir para a próxima tarefa (o próximo `[ ]`).
+   - Salve o arquivo (caso tenha feito *replace*), informe ao usuário o que foi feito e pergunte se pode seguir para a próxima tarefa (o próximo `[ ]`). NUNCA FAÇA COMMIT NESTA ETAPA SEM PERMISSÃO.
    - Repita o processo até que o arquivo não tenha mais marcadores `- [ ]`.
 
 ## Regras Críticas
 - **NUNCA** mude todas as tarefas para `[x]` de uma vez. A progressão deve ser iterativa e real. Só marque uma tarefa como `[x]` quando o código ou a configuração daquela etapa específica estiver pronta.
 - Se travar em um erro ou precisar de uma decisão arquitetural, pare, explique o problema e peça permissão ao usuário antes de avançar para a próxima tarefa ou marcar com `[x]`.
+- **PROIBIDO FAZER COMMIT**: NUNCA, sob hipótese alguma, faça *git commit* ou *git push* após realizar uma tarefa, a menos que o usuário explicitamente ordene. O código deve ser revisado e testado pelo usuário antes de qualquer operação de versionamento.
