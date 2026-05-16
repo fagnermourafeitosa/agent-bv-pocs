@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
-from document_loader import load_and_split_document
+from poc1_task2_load_documents import load_and_split_document
 import chromadb
 
 # Carrega as variáveis de ambiente
@@ -12,7 +12,7 @@ def vectorize_documents():
     """
     Vetoriza os documentos e salva no ChromaDB usando Embeddings do Gemini.
     """
-    base_dir = os.path.dirname(os.path.dirname(__file__))
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     doc_path = os.path.join(base_dir, "docs", "politica_bv.md")
     
     # 1. Carrega e divide os documentos usando o script da Tarefa 2
