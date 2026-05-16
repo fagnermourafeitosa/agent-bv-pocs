@@ -7,3 +7,5 @@ chromadb==0.4.22
 deepeval==0.20.1
 langfuse==2.15.0
 python-dotenv==1.0.1
+langchain-google-genai==0.0.8
+langchain-chroma==0.1.0
