@@ -1,6 +1,6 @@
-# Objetivos do Projeto (Agentes e Skills BV)
+# Objetivos do Projeto/Perfil: Governança Comportamental e Tom de Voz de Agentes de IA
 
-Com base no documento de `requisitos`, o projeto/papel tem como objetivo principal estruturar, implementar e governar soft skills, comportamentos e tom de voz de agentes de Inteligência Artificial do Banco BV.
+Com base no documento de `requisitos`, o perfil foca em estruturar, implementar e governar soft skills, comportamentos e tom de voz de agentes de Inteligência Artificial do Banco BV.
 
 ## 1. Governança Comportamental e Soft Skills
 - Desenvolver e evoluir taxonomias de soft skills aplicáveis a agentes de IA, traduzindo valores e princípios do banco em comportamentos observáveis e mensuráveis.
@@ -21,9 +21,3 @@ Com base no documento de `requisitos`, o projeto/papel tem como objetivo princip
 - Realizar prototipação rápida, provas de conceito (PoCs) e pilotos para comportamento e governança dos agentes.
 - Atuar no Ciclo de Vida dos Agentes de IA, garantindo a presença dos aspectos de voz e comportamento desde a ideação até a operação.
 - Documentar padrões, frameworks e aprendizados para aumentar a maturidade institucional em IA responsável.
-
-## Requisitos Técnicos e de Perfil
-- Experiência prática com IA aplicada, LLMs e agentes inteligentes.
-- Habilidade na modelagem estruturada de comportamentos e tom de voz.
-- Vivência em testes, métricas, Teste A/B e monitoramento em produção.
-- Visão sistêmica, forte capacidade de articulação interdisciplinar (estratégia vs. técnica) e sensibilidade ética/cultural.
