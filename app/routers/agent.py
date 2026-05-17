@@ -15,6 +15,7 @@ router = APIRouter(prefix="/api/agent", tags=["agent"])
 
 class AgentRequest(BaseModel):
     question: str
+    session_id: str = None
 
 
 @router.post("/ask")
@@ -26,6 +27,6 @@ async def ask_agent(request: AgentRequest):
     e valida a resposta antes de retornar.
     """
     try:
-        return run_agent(request.question)
+        return run_agent(request.question, session_id=request.session_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -256,6 +256,12 @@
 
             <div class="card">
                 <input type="text" id="input-agent" placeholder="Ex: Quero financiar um carro ou Qual a anuidade do cartão?">
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <span id="session-badge" style="font-size:12px; color:var(--text-secondary); background:rgba(0,0,0,0.05); padding:4px 8px; border-radius:4px; font-family:monospace;">Sessão: carregando...</span>
+                    <button onclick="resetSession()" style="padding:6px 12px; font-size:11px; background:#86868B; border-radius:4px; height:auto; line-height:1;">Nova Sessão</button>
+                </div>
+
                 <button id="btn-agent" onclick="runAgent()">Perguntar ao Agente</button>
                 <div id="loader-agent" class="loader">Orquestrando agentes via LangGraph...</div>
 
@@ -384,6 +390,18 @@
                 loader.style.display = 'none';
             }
         }
+        let chatSessionId = '';
+
+        function resetSession() {
+            chatSessionId = 'session_' + Math.random().toString(36).substring(2, 11);
+            document.getElementById('session-badge').textContent = 'Sessão: ' + chatSessionId;
+        }
+
+        // Inicializa a primeira sessão
+        window.addEventListener('DOMContentLoaded', () => {
+            resetSession();
+        });
+
         async function runAgent() {
             const btn = document.getElementById('btn-agent');
             const loader = document.getElementById('loader-agent');
@@ -402,7 +420,7 @@
                 const res = await fetch('/api/agent/ask', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question })
+                    body: JSON.stringify({ question, session_id: chatSessionId })
                 });
                 const data = await res.json();
 
@@ -419,6 +437,7 @@
                 resultBox.innerHTML = [
                     `<strong>Domínio:</strong> ${domainLabel[data.domain] || data.domain}`,
                     `<strong>Validação:</strong> ${validLabel}`,
+                    `<strong>Trace ID do Langfuse:</strong> <code>${data.trace_id || 'indisponível'}</code>`,
                     `<strong>Resposta:</strong>\n${data.answer || JSON.stringify(data, null, 2)}`
                 ].join('\n\n');
                 resultBox.style.whiteSpace = 'pre-wrap';

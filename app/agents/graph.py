@@ -86,21 +86,22 @@ def build_agent_graph() -> StateGraph:
 agent_graph = build_agent_graph()
 
 
-def run_agent(question: str) -> dict:
+def run_agent(question: str, session_id: str = None) -> dict:
     """
-    Ponto de entrada para executar o grafo multiagente.
+    Ponto de entrada para executar o grafo multiagente com suporte a observabilidade estendida.
 
     Args:
         question: Pergunta do usuário.
+        session_id: ID da sessão de conversa para agrupar traces relacionados.
 
     Returns:
-        dict com domain, specialist_answer e answer_approved.
+        dict com domain, specialist_answer, answer_approved e trace_id.
     """
     from langchain_core.messages import HumanMessage
 
     import app.langchain_compatibility
     from langfuse.callback import CallbackHandler
-    langfuse_handler = CallbackHandler()
+    langfuse_handler = CallbackHandler(session_id=session_id)
 
     initial_state: ConversationState = {
         "messages": [HumanMessage(content=question)],
@@ -110,9 +111,26 @@ def run_agent(question: str) -> dict:
         "trace": [f"[Usuário] Pergunta recebida: {question}"],
     }
     result = agent_graph.invoke(initial_state, config={"callbacks": [langfuse_handler]})
+
+    # Registra o score de validação automática do supervisor no Langfuse
+    trace_id = langfuse_handler.get_trace_id()
+    if trace_id:
+        try:
+            langfuse_handler.langfuse.score(
+                trace_id=trace_id,
+                name="supervisor-approval",
+                value=1.0 if result["answer_approved"] else 0.0,
+                comment="Aprovação do supervisor no fluxo de governança"
+            )
+            langfuse_handler.flush()
+        except Exception as score_err:
+            # Tolerante a falhas na gravação do score para não quebrar a API
+            pass
+
     return {
         "domain": result["domain"],
         "answer": result["specialist_answer"],
         "validated": result["answer_approved"],
         "trace": result.get("trace", []),
+        "trace_id": trace_id,
     }
