@@ -29,7 +29,7 @@ class GoogleGeminiDeepEval(DeepEvalBaseLLM):
     (LLM-as-a-Judge) nas avaliações do DeepEval.
     """
     def __init__(self, model_name=None):
-        model_to_use = model_name or os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+        model_to_use = model_name or os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
         self.model = ChatGoogleGenerativeAI(model=model_to_use, temperature=0)
 
     def load_model(self):

@@ -23,7 +23,7 @@ def generate_persona_response(question: str) -> str:
     (Utilizado de forma avulsa/router).
     """
     llm = ChatGoogleGenerativeAI(
-        model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        model=os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"),
         temperature=0.7,
     )
     
@@ -44,7 +44,7 @@ def persona_node(state: ConversationState) -> ConversationState:
     question = state["messages"][-1].content if state.get("messages") else ""
     
     llm = ChatGoogleGenerativeAI(
-        model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        model=os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"),
         temperature=0.7,
     )
     

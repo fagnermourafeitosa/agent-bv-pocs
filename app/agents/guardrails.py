@@ -17,7 +17,7 @@ from app.agents.state import ConversationState
 load_dotenv()
 
 _LLM = ChatGoogleGenerativeAI(
-    model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+    model=os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"),
     temperature=0,
 )
 
