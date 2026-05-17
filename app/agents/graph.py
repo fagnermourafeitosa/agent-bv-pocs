@@ -21,6 +21,7 @@ from app.agents.supervisor import supervisor_route, supervisor_validate
 from app.agents.credit_specialist import credit_specialist
 from app.agents.service_specialist import service_specialist, handle_unknown_domain
 from app.agents.persona import persona_node
+from app.agents.guardrails import guardrail_node
 
 
 def _route_to_specialist(state: ConversationState) -> str:
@@ -52,6 +53,7 @@ def build_agent_graph() -> StateGraph:
     graph.add_node("service_specialist", service_specialist)
     graph.add_node("handle_unknown_domain", handle_unknown_domain)
     graph.add_node("persona_node", persona_node)
+    graph.add_node("guardrail_node", guardrail_node)
     graph.add_node("supervisor_validate", supervisor_validate)
 
     # ── Fluxo principal ───────────────────────────────────────────────────────
@@ -73,8 +75,9 @@ def build_agent_graph() -> StateGraph:
     graph.add_edge("service_specialist", "persona_node")
     graph.add_edge("handle_unknown_domain", END)
 
-    # Após aplicar persona, vai para validação
-    graph.add_edge("persona_node", "supervisor_validate")
+    # Após aplicar persona, passa pelo guardrail ético
+    graph.add_edge("persona_node", "guardrail_node")
+    graph.add_edge("guardrail_node", "supervisor_validate")
 
     # Após validação, encerra
     graph.add_edge("supervisor_validate", END)
@@ -112,19 +115,44 @@ def run_agent(question: str, session_id: str = None) -> dict:
     }
     result = agent_graph.invoke(initial_state, config={"callbacks": [langfuse_handler]})
 
-    # Registra o score de validação automática do supervisor no Langfuse
+    # Registra scores e atualiza o trace no Langfuse
     trace_id = langfuse_handler.get_trace_id()
     if trace_id:
         try:
+            # Envia o score de aprovação do supervisor
             langfuse_handler.langfuse.score(
                 trace_id=trace_id,
                 name="supervisor-approval",
                 value=1.0 if result["answer_approved"] else 0.0,
                 comment="Aprovação do supervisor no fluxo de governança"
             )
+            
+            # Detecta se houve violação ética ou injeção detectada no guardrail
+            guardrail_violated = any(
+                "Violação ética detectada" in str(line) or "Tentativa de Prompt Injection detectada" in str(line)
+                for line in result.get("trace", [])
+            )
+            
+            # Envia o score de segurança do guardrail
+            langfuse_handler.langfuse.score(
+                trace_id=trace_id,
+                name="guardrail-safety",
+                value=0.0 if guardrail_violated else 1.0,
+                comment="Detecção de violação ética no guardrail" if guardrail_violated else "Passou nos guardrails éticos"
+            )
+            
+            # Se foi violado (injection detectado), atualiza as tags e nome do trace
+            if guardrail_violated:
+                langfuse_handler.langfuse.trace(
+                    id=trace_id,
+                    name="ethical-guardrail-violation",
+                    tags=["guardrail-violation", "prompt-injection-blocked"],
+                    public=True
+                )
+            
             langfuse_handler.flush()
-        except Exception as score_err:
-            # Tolerante a falhas na gravação do score para não quebrar a API
+        except Exception:
+            # Tolerante a falhas na gravação para não quebrar a execução principal
             pass
 
     return {

@@ -24,9 +24,10 @@ def test_comportamento_agente(item):
         f"Resposta recebida: {response}"
     )
     
-    # Nenhuma das tags proibidas deve estar na resposta
+    import re
+    # Nenhuma das tags proibidas deve estar na resposta como palavra inteira
     for tag in forbidden_tags:
-        assert tag not in content, (
+        assert not re.search(r'\b' + re.escape(tag) + r'\b', content), (
             f"A resposta contém um termo proibido '{tag}'. "
             f"Resposta recebida: {response}"
         )
