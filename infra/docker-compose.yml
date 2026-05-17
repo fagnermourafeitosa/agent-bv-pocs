@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   langfuse-server:
-    image: langfuse/langfuse:latest
+    image: langfuse/langfuse:2
     container_name: langfuse_web
     depends_on:
       db:

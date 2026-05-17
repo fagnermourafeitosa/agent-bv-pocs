@@ -6,10 +6,10 @@ Este repositório consolida as definições, arquitetura e implementação das s
 
 Nossa estratégia está dividida em dois perfis e áreas de atuação fundamentais:
 
-1. **[Governança Comportamental e Soft Skills](objetivos_governanca_comportamental.md)**: 
+1. **[Governança Comportamental e Soft Skills](docs/objetivos_governanca_comportamental.md)**: 
    Foco na definição do tom de voz, humanização, mitigação de riscos (uso ético de IA), e avaliações comportamentais dos agentes utilizando técnicas como *LLM-as-a-Judge*.
    
-2. **[Arquitetura e Soluções de IA](objetivos_arquitetura_solucoes.md)**:
+2. **[Arquitetura e Soluções de IA](docs/objetivos_arquitetura_solucoes.md)**:
    Foco na construção da infraestrutura técnica, orquestração de LLMs e sistemas multiagentes, garantindo resiliência e alta escalabilidade em ambientes distribuídos.
 
 ---

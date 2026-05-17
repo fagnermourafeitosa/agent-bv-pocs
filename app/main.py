@@ -1,36 +1,35 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+"""Entry point da API — registro de routers e configuração geral."""
+import os
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
+from app.routers.knowledge import router as knowledge_router
+from app.routers.agent import router as agent_router
+from app.routers.behavior import router as behavior_router
+
+import app.langchain_compatibility
+from dotenv import load_dotenv
+load_dotenv()
+
+from langfuse.callback import CallbackHandler
+langfuse_handler = CallbackHandler()
 
 app = FastAPI(
-    title="Agents & Skills BV - API",
-    description="API de orquestração de agentes de IA com governança comportamental e RAG.",
-    version="0.1.0"
+    title="Agents & Skills BV",
+    description="API de agentes de IA com RAG, governança comportamental e observabilidade.",
+    version="1.0.0",
 )
 
-class AgentRequest(BaseModel):
-    user_input: str
-    session_id: str | None = None
+app.include_router(knowledge_router)
+app.include_router(agent_router)
+app.include_router(behavior_router)
 
-class AgentResponse(BaseModel):
-    response: str
-    status: str
+templates = Jinja2Templates(
+    directory=os.path.join(os.path.dirname(__file__), "templates")
+)
 
-@app.get("/")
-async def root():
-    return {"message": "API de Agentes BV está online. Acesse /docs para a documentação Swagger."}
 
-@app.post("/api/v1/chat", response_model=AgentResponse)
-async def chat_with_agent(request: AgentRequest):
-    """
-    Endpoint principal para interação com os agentes.
-    Aqui integraremos a chamada para o LangGraph e o ChromaDB.
-    """
-    try:
-        # TODO: Integrar a lógica do LangGraph e Langfuse aqui
-        
-        # Mock temporário
-        agent_reply = f"Mock: Recebi sua mensagem -> '{request.user_input}'. Em breve o LangGraph assumirá esta resposta."
-        
-        return AgentResponse(response=agent_reply, status="success")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse(request, "index.html")

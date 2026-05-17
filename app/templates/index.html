@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BV Agents</title>
+    <style>
+        :root {
+            --bg-sidebar: #F5F5F7;
+            --bg-main: #FFFFFF;
+            --text-primary: #1D1D1F;
+            --text-secondary: #86868B;
+            --accent: #007AFF;
+            --border: #E5E5EA;
+            --card-bg: #FFFFFF;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 16px;
+        }
+
+        .logo-area {
+            margin-bottom: 32px;
+            padding: 0 8px;
+        }
+
+        .logo-area h1 {
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .menu-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding: 0 8px;
+        }
+
+        .menu-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 400;
+            transition: background 0.15s ease;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .menu-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .menu-item.active {
+            background: var(--accent);
+            color: white;
+            font-weight: 500;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 56px 48px;
+            overflow-y: auto;
+            background: var(--bg-main);
+        }
+
+        .view-section {
+            display: none;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .view-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.4;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: #006ce4;
+        }
+
+        button:disabled {
+            background: #A1C9F7;
+            cursor: not-allowed;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 16px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+
+        .result-box {
+            background: #F5F5F7;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 13px;
+            color: #1D1D1F;
+            white-space: pre-wrap;
+            margin-top: 24px;
+            display: none;
+            border: 1px solid var(--border);
+        }
+
+        .loader {
+            display: none;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-area">
+            <h1>BV Agents</h1>
+        </div>
+
+        <div>
+            <div class="menu-title">PoC 1 — Motor RAG</div>
+            <a class="menu-item active" onclick="switchView('view-vectorize', this)">1. Ingestão</a>
+            <a class="menu-item" onclick="switchView('view-retrieve', this)">2. Retriever</a>
+            <a class="menu-item" onclick="switchView('view-rag', this)">3. Chat RAG</a>
+        </div>
+
+        <div style="margin-top: 24px;">
+            <div class="menu-title">PoC 2 — Multiagentes</div>
+            <a class="menu-item" onclick="switchView('view-agent', this)">4. Agente Supervisor</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- View 1: Vectorize -->
+        <div id="view-vectorize" class="view-section active">
+            <h2>Ingestão de Dados</h2>
+            <p class="subtitle">Carrega e fatia as FAQs de Cartões e Empréstimos em blocos menores para vetorização semântica usando embeddings locais HuggingFace.</p>
+            
+            <div class="card">
+                <button id="btn-vectorize" onclick="runVectorize()">Iniciar Ingestão</button>
+                <div id="loader-vectorize" class="loader">Processando documentos e armazenando no ChromaDB...</div>
+                <div id="result-vectorize" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- View 2: Retrieve -->
+        <div id="view-retrieve" class="view-section">
+            <h2>Busca Semântica</h2>
+            <p class="subtitle">Insira uma consulta para o motor de busca recuperar os trechos da FAQ mais similares e relevantes presentes no banco vetorial.</p>
+            
+            <div class="card">
+                <input type="text" id="input-retrieve" placeholder="Ex: Regras de anuidade de cartões">
+                <button id="btn-retrieve" onclick="runRetrieve()">Procurar</button>
+                <div id="loader-retrieve" class="loader">Buscando informações relevantes...</div>
+                <div id="result-retrieve" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- View 3: RAG -->
+        <div id="view-rag" class="view-section">
+            <h2>RAG com Guardrails</h2>
+            <p class="subtitle">Faça perguntas complexas. O LLM utilizará a base vetorial para formular a resposta de forma segura e embasada.</p>
+            
+            <div class="card">
+            <input type="text" id="input-rag" placeholder="Faça uma pergunta sobre os produtos do banco...">
+                <button id="btn-rag" onclick="runRag()">Enviar</button>
+                <div id="loader-rag" class="loader">Processando RAG e consultando modelo...</div>
+                <div id="result-rag" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- View 4: Agente Multiagente -->
+        <div id="view-agent" class="view-section">
+            <h2>Agente Supervisor</h2>
+            <p class="subtitle">O Supervisor identifica o domínio, delega ao especialista correto e valida a resposta antes de finalizar.</p>
+
+            <div class="card">
+                <input type="text" id="input-agent" placeholder="Ex: Quero financiar um carro ou Qual a anuidade do cartão?">
+                <button id="btn-agent" onclick="runAgent()">Perguntar ao Agente</button>
+                <div id="loader-agent" class="loader">Orquestrando agentes via LangGraph...</div>
+
+                <!-- Trace Log collapsible -->
+                <details id="agent-trace-details" open style="margin-top: 16px;">
+                    <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--text-secondary); letter-spacing:.06em; text-transform:uppercase; user-select:none;">Log de Orquestração</summary>
+                    <textarea
+                        id="agent-trace"
+                        readonly
+                        placeholder="O trace da interação entre os agentes aparece aqui..."
+                        style="
+                            width:100%; height:130px; margin-top:10px;
+                            background:#F5F5F7; border:1px solid var(--border);
+                            border-radius:8px; padding:12px; font-size:12px;
+                            font-family: 'SF Mono', ui-monospace, monospace;
+                            color:var(--text-secondary); resize:vertical;
+                            line-height:1.6; outline:none;
+                        "
+                    ></textarea>
+                </details>
+
+                <div id="result-agent" class="result-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchView(viewId, element) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        async function runVectorize() {
+            const btn = document.getElementById('btn-vectorize');
+            const loader = document.getElementById('loader-vectorize');
+            const resultBox = document.getElementById('result-vectorize');
+            
+            btn.disabled = true;
+            loader.style.display = 'block';
+            resultBox.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/knowledge/ingest', { method: 'POST' });
+                const data = await res.json();
+                resultBox.textContent = JSON.stringify(data, null, 2);
+                resultBox.style.display = 'block';
+            } catch (err) {
+                resultBox.textContent = "Erro de conexão: " + err;
+                resultBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        async function runRetrieve() {
+            const btn = document.getElementById('btn-retrieve');
+            const loader = document.getElementById('loader-retrieve');
+            const resultBox = document.getElementById('result-retrieve');
+            const query = document.getElementById('input-retrieve').value;
+            
+            if (!query) return;
+
+            btn.disabled = true;
+            loader.style.display = 'block';
+            resultBox.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/knowledge/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                const data = await res.json();
+                
+                let out = "";
+                if (data.results) {
+                    data.results.forEach((r, i) => {
+                        out += `=== Resultado ${i+1} ===\n${r}\n\n`;
+                    });
+                } else {
+                    out = JSON.stringify(data, null, 2);
+                }
+                
+                resultBox.textContent = out || "Nenhum resultado.";
+                resultBox.style.display = 'block';
+            } catch (err) {
+                resultBox.textContent = "Erro de conexão: " + err;
+                resultBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        async function runRag() {
+            const btn = document.getElementById('btn-rag');
+            const loader = document.getElementById('loader-rag');
+            const resultBox = document.getElementById('result-rag');
+            const query = document.getElementById('input-rag').value;
+            
+            if (!query) return;
+
+            btn.disabled = true;
+            loader.style.display = 'block';
+            resultBox.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/knowledge/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                const data = await res.json();
+                
+                resultBox.textContent = data.answer || JSON.stringify(data, null, 2);
+                resultBox.style.display = 'block';
+            } catch (err) {
+                resultBox.textContent = "Erro de conexão: " + err;
+                resultBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+        async function runAgent() {
+            const btn = document.getElementById('btn-agent');
+            const loader = document.getElementById('loader-agent');
+            const resultBox = document.getElementById('result-agent');
+            const traceBox = document.getElementById('agent-trace');
+            const question = document.getElementById('input-agent').value;
+
+            if (!question) return;
+
+            btn.disabled = true;
+            loader.style.display = 'block';
+            resultBox.style.display = 'none';
+            traceBox.value = '⏳ Aguardando resposta dos agentes...';
+
+            try {
+                const res = await fetch('/api/agent/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+                const data = await res.json();
+
+                // Popula o trace log
+                if (data.trace && data.trace.length) {
+                    traceBox.value = data.trace.join('\n');
+                } else {
+                    traceBox.value = '(sem trace disponível)';
+                }
+
+                const domainLabel = { credito: '💳 Crédito', atendimento: '🎧 Atendimento', desconhecido: '❓ Desconhecido' };
+                const validLabel = data.validated ? '✅ Aprovado' : '⚠️ Reprovado';
+
+                resultBox.innerHTML = [
+                    `<strong>Domínio:</strong> ${domainLabel[data.domain] || data.domain}`,
+                    `<strong>Validação:</strong> ${validLabel}`,
+                    `<strong>Resposta:</strong>\n${data.answer || JSON.stringify(data, null, 2)}`
+                ].join('\n\n');
+                resultBox.style.whiteSpace = 'pre-wrap';
+                resultBox.style.display = 'block';
+            } catch (err) {
+                traceBox.value = 'Erro: ' + err;
+                resultBox.textContent = 'Erro de conexão: ' + err;
+                resultBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

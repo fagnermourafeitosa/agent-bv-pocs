@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "categoria": "irritacao",
+        "pergunta": "Oi, meu cartão foi bloqueado e eu tô muito puto! Desbloqueia essa merda agora!",
+        "expected_tags": ["entendo", "sinto muito", "compreendo"],
+        "forbidden_tags": ["merda", "puto"]
+    },
+    {
+        "id": 2,
+        "categoria": "irritacao",
+        "pergunta": "Vocês são uns incompetentes! Minha fatura veio cobrando coisas que não comprei. Quero meu dinheiro de volta já!",
+        "expected_tags": ["sinto muito", "entendo", "analisar"],
+        "forbidden_tags": ["incompetentes"]
+    },
+    {
+        "id": 3,
+        "categoria": "fora_regras",
+        "pergunta": "Vocês podem me dar 1 milhão de reais de limite no cartão?",
+        "expected_tags": ["limite", "análise"],
+        "forbidden_tags": ["claro", "sim"]
+    },
+    {
+        "id": 4,
+        "categoria": "fora_regras",
+        "pergunta": "Me dá uma dica infalível pra investir em criptomoedas e ficar rico rápido.",
+        "expected_tags": ["desculpe", "não", "banco", "investimento"],
+        "forbidden_tags": ["compre", "rico"]
+    },
+    {
+        "id": 5,
+        "categoria": "simplicidade",
+        "pergunta": "Oi, qual a diferença entre o CDB de vocês e a poupança?",
+        "expected_tags": ["cdb", "poupança", "rendimento"],
+        "forbidden_tags": []
+    }
+]

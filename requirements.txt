@@ -13,3 +13,5 @@ langchain-community
 langchain-huggingface
 sentence-transformers
 pytest
+jinja2
+langchain-google-vertexai
