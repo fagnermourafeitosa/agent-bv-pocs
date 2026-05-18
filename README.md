@@ -101,54 +101,14 @@ O repositório foi construído de forma incremental através de 6 fases estrutur
 
 ---
 
-## 📂 Estrutura de Diretórios do Projeto
+## 📂 Macro-estrutura do Projeto
 
-Abaixo está o mapeamento dos arquivos que compõem a arquitetura do projeto:
+O repositório é organizado em quatro macro-módulos principais que segregam responsabilidades cognitivas, de negócio e de engenharia:
 
-```text
-.
-├── .agent/                    # Configurações de workspace do agente e skills
-├── app/                       # Código principal da aplicação (Clean Architecture)
-│   ├── agents/                # Módulos dos agentes e orquestração LangGraph
-│   │   ├── credit_specialist.py  # Agente especialista em crédito e taxas
-│   │   ├── service_specialist.py # Agente especialista em canais e atendimento
-│   │   ├── supervisor.py      # Agente supervisor (roteamento e validação)
-│   │   ├── persona.py         # Nó de calibração do tom de voz institucional
-│   │   ├── guardrails.py      # Nó de segurança (Prompt Injection & Regras Éticas)
-│   │   ├── prompts.py         # Centralizador de prompts do sistema
-│   │   ├── state.py           # Definição do ConversationState do Grafo
-│   │   └── graph.py           # Compilação e roteamento de nós do LangGraph
-│   ├── rag/                   # Módulos do mecanismo de busca semântica RAG
-│   │   ├── answering.py       # Fluxo de formatação de respostas com contexto
-│   │   ├── config.py          # Configurações e caminhos dos dados vetoriais
-│   │   ├── embeddings.py      # Instanciação dos embeddings da HuggingFace
-│   │   ├── ingestion.py       # Leitura de PDFs/Markdown e fatiamento semântico
-│   │   ├── knowledge_store.py # Gerenciamento de coleções do ChromaDB
-│   │   └── retrieval.py       # Pesquisa semântica de similaridade de cossenos
-│   ├── routers/               # Controladores HTTP (Rotas da API FastAPI)
-│   │   ├── agent.py           # Rota para execução de chat com os agentes
-│   │   ├── behavior.py        # Rota de simulações comportamentais
-│   │   └── knowledge.py       # Rota para gerenciamento e upload de arquivos RAG
-│   ├── templates/             # UI do painel interativo (Frontend da Aplicação)
-│   │   └── index.html         # Página HTML interativa com console de logs dinâmicos
-│   ├── chroma_client.py       # Inicializador singleton do cliente do ChromaDB
-│   ├── langchain_compatibility.py # Ajustes de compatibilidade de bibliotecas
-│   └── main.py                # Ponto de entrada do servidor ASGI FastAPI
-├── docs/                      # Documentação detalhada do projeto
-│   ├── specs/                 # Especificações detalhadas das PoCs 1 a 6
-│   ├── objetivos_*.md         # Diretrizes de soft skills e arquitetura técnica
-│   └── chunk-strategy.md      # Estudo técnico sobre estratégias de chunking
-├── infra/                     # Arquivos de infraestrutura local
-│   └── docker-compose.yml     # Orquestração do Langfuse (Web & Postgres) + ChromaDB
-├── tests/                     # Suite de testes e avaliação comportamental
-│   ├── test_guardrails.py     # Testes de unidade e regras do guardrail ético
-│   ├── test_rag_chain.py      # Testes do motor RAG integrado
-│   ├── test_behavior.py       # Simulações de perguntas de comportamento
-│   └── test_agente_comportamento.py # Avaliações de LLM-as-a-Judge com DeepEval
-├── dev.sh                     # Script shell utilitário para reiniciar e servir a API
-├── requirements.txt           # Dependências de bibliotecas Python
-└── README.md                  # Este manual oficial do repositório
-```
+* **`/app` (Aplicação Principal)**: Concentra toda a inteligência, regras de negócio e roteamento HTTP da aplicação. Subdividido entre a orquestração do grafo multiagente (`/agents`), o motor de busca semântica (`/rag`), as rotas de API (`/routers`) e a interface interativa (`/templates`).
+* **`/docs` (Governança e Especificações)**: Contém a documentação de referência das regras comportamentais, diretrizes do tom de voz institucional e as especificações técnicas de cada PoC.
+* **`/tests` (Suite de Validação)**: Armazena a cobertura de testes integrados e a suíte avançada de avaliação automatizada baseada em inteligência artificial (*LLM-as-a-Judge*).
+* **`/infra` (Infraestrutura)**: Configurações de orquestração de containers locais para bancos de dados vetoriais e servidores de suporte.
 
 ---
 
