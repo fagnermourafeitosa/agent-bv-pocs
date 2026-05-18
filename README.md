@@ -284,6 +284,18 @@ pytest tests/test_agente_comportamento.py -v
 
 ---
 
+## 🚀 Próximos Passos e Evolução (Roadmap Conceitual)
+
+Visando a transição do ecossistema de testes para um ambiente produtivo resiliente em escala de milhões de clientes, o roadmap técnico prevê a evolução dos seguintes macro-módulos:
+
+* **Banco Vetorial de Produção**: Evolução da infraestrutura vetorial local para clusters distribuídos de banco vetorial em nuvem (ex: Pinecone, Qdrant ou PGVector), garantindo alta disponibilidade, replicação e isolamento de dados.
+* **Ingestão Assíncrona (ETL Vetorial)**: Desacoplamento da ingestão de documentos por meio de pipelines de processamento assíncrono (ex: com filas Kafka ou RabbitMQ), suportando arquivos densos sem impactar o tempo de resposta da API principal.
+* **Mecanismos de Recuperação Avançada (Advanced Retrieval)**: Implementação de busca híbrida (busca semântica aliada a busca textual por palavra-chave BM25), re-ranking semântico (Cross-Encoders) e contextualização prévia de fatias de texto para maximizar a precisão do RAG.
+* **Validação Cognitiva Contínua**: Integração completa da esteira de testes semânticos e juízes automatizados (*LLM-as-a-Judge*) na esteira de integração contínua (CI/CD), prevenindo regressões de persona ou brechas de segurança a cada alteração de prompt.
+* **Cache Semântico e Runtime**: Adoção de cache vetorial distribuído (ex: Redis) para armazenar respostas de interações frequentes com similaridade semântica alta, reduzindo custos e tempos de latência nas transições do grafo.
+
+---
+
 ### 🛡️ Políticas de Governança Importantes (Guardrails Corporativos)
 * **Nunca prometa aprovação imediata**: O Banco BV opera em conformidade técnica de análise de crédito individual de acordo com o perfil de risco.
 * **Transparência de Identidade**: O assistente sempre se identificará como um robô inteligente, auxiliando de maneira amigável, transparente e segura.
